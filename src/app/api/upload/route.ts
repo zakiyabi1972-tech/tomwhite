@@ -27,9 +27,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Try getting from Cloudflare Context (reliable for secrets in Edge)
     try {
         const { env } = getRequestContext();
-        if (env && (env as any).SUPABASE_SERVICE_ROLE_KEY) {
-            serviceRoleKey = (env as any).SUPABASE_SERVICE_ROLE_KEY;
-            console.log('[Upload] Retrieved key from getRequestContext()');
+        if (env) {
+            // Log ALL available keys to debug what is actually present
+            console.log('[Upload] Request Context Keys:', Object.keys(env).join(', '));
+
+            if ((env as any).SUPABASE_SERVICE_ROLE_KEY) {
+                serviceRoleKey = (env as any).SUPABASE_SERVICE_ROLE_KEY;
+                console.log('[Upload] Retrieved key from getRequestContext()');
+            }
+        } else {
+            console.log('[Upload] getRequestContext().env is null/undefined');
         }
     } catch (e) {
         console.log('[Upload] getRequestContext() not available or failed', e);
