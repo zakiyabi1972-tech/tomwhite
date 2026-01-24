@@ -28,12 +28,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
         const { env } = getRequestContext();
         if (env) {
-            // Log ALL available keys to debug what is actually present
-            console.log('[Upload] Request Context Keys:', Object.keys(env).join(', '));
+            // Log keys for debugging
+            const envKeys = Object.keys(env);
+            console.log('[Upload] Request Context Keys:', envKeys.join(', '));
 
-            if ((env as any).SUPABASE_SERVICE_ROLE_KEY) {
-                serviceRoleKey = (env as any).SUPABASE_SERVICE_ROLE_KEY;
-                console.log('[Upload] Retrieved key from getRequestContext()');
+            // Robust lookup: Find key that matches "SUPABASE_SERVICE_ROLE_KEY" even with whitespace
+            const targetKey = 'SUPABASE_SERVICE_ROLE_KEY';
+            const realKey = envKeys.find(k => k.trim() === targetKey);
+
+            if (realKey) {
+                console.log(`[Upload] Found actual key '${realKey}' (length: ${realKey.length})`);
+                const value = (env as any)[realKey];
+                if (value) {
+                    serviceRoleKey = value;
+                    console.log('[Upload] Retrieved non-empty value using fuzzy match');
+                } else {
+                    console.log('[Upload] Key found but value is empty/falsy');
+                }
+            } else {
+                console.log('[Upload] Exact match for SUPABASE_SERVICE_ROLE_KEY not found in keys');
             }
         } else {
             console.log('[Upload] getRequestContext().env is null/undefined');
