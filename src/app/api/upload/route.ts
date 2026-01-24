@@ -20,6 +20,18 @@ interface UploadResult {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+    console.log('[Upload] Starting upload request from IP:', request.headers.get('CF-Connecting-IP') || 'unknown');
+    console.log('[Upload] Runtime:', process.env.NEXT_RUNTIME);
+
+    // Debugging Env Vars (safely)
+    console.log('[Upload] Env Check - NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING');
+    console.log('[Upload] Env Check - SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'MISSING');
+    console.log('[Upload] Env Check - NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Present' : 'MISSING');
+
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        console.error('[Upload] CRITICAL: SUPABASE_SERVICE_ROLE_KEY is missing! Uploads will likely fail (403)');
+    }
+
     try {
         const formData = await request.formData();
         const file = formData.get('file') as File | null;
