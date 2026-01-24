@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getRequestContext } from '@cloudflare/next-on-pages';
 
 export const runtime = 'edge';
 
 // Server-side Supabase client with service role for uploads
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Note: We initialize this inside the request handler now to access runtime env vars
+// const supabaseAdmin = createClient(...) - REMOVED
 
 // Image variants removed for Edge compatibility (Sharp not supported)
 // const IMAGE_VARIANTS = { ... }
@@ -23,14 +22,36 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     console.log('[Upload] Starting upload request from IP:', request.headers.get('CF-Connecting-IP') || 'unknown');
     console.log('[Upload] Runtime:', process.env.NEXT_RUNTIME);
 
+    let serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    // Try getting from Cloudflare Context (reliable for secrets in Edge)
+    try {
+        const { env } = getRequestContext();
+        if (env && (env as any).SUPABASE_SERVICE_ROLE_KEY) {
+            serviceRoleKey = (env as any).SUPABASE_SERVICE_ROLE_KEY;
+            console.log('[Upload] Retrieved key from getRequestContext()');
+        }
+    } catch (e) {
+        console.log('[Upload] getRequestContext() not available or failed', e);
+    }
+
     // Debugging Env Vars (safely)
     console.log('[Upload] Env Check - NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING');
-    console.log('[Upload] Env Check - SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'MISSING');
-    console.log('[Upload] Env Check - NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Present' : 'MISSING');
+    console.log('[Upload] Env Check - Service Role Key Available:', !!serviceRoleKey);
 
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    if (!serviceRoleKey) {
         console.error('[Upload] CRITICAL: SUPABASE_SERVICE_ROLE_KEY is missing! Uploads will likely fail (403)');
+        return NextResponse.json(
+            { error: 'Server configuration error: Missing Service Role Key' },
+            { status: 500 }
+        );
     }
+
+    // Initialize Supabase Admin Client inside the request context with the resolved keys
+    const supabaseAdmin = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        serviceRoleKey
+    );
 
     try {
         const formData = await request.formData();
