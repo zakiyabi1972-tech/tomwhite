@@ -28,9 +28,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
         const { env } = getRequestContext();
         if (env) {
-            // Log keys for debugging
             const envKeys = Object.keys(env);
-            console.log('[Upload] Request Context Keys:', envKeys.join(', '));
 
             // Robust lookup: Find key that matches "SUPABASE_SERVICE_ROLE_KEY" even with whitespace
             const targetKey = 'SUPABASE_SERVICE_ROLE_KEY';

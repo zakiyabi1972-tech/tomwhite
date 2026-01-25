@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, LogOut, Loader2, Search } from 'lucide-react';
+import { ArrowLeft, LogOut, Loader2, Search, Ruler } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSiteSettings, useUpdateSiteSettings } from '@/hooks/useSiteSettings';
+import { useSiteSettings, useUpdateSiteSettings, parseSizeChart, DEFAULT_SIZE_CHART, SizeChartData } from '@/hooks/useSiteSettings';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +27,10 @@ function SettingsContent() {
         business_email: '',
         min_order_default: '50',
         search_enabled: 'false',
+        store_map_url: '',
     });
+
+    const [sizeChartData, setSizeChartData] = useState<SizeChartData>(DEFAULT_SIZE_CHART);
 
     useEffect(() => {
         if (settings) {
@@ -39,7 +42,9 @@ function SettingsContent() {
                 business_email: settings.business_email,
                 min_order_default: settings.min_order_default,
                 search_enabled: settings.search_enabled || 'false',
+                store_map_url: settings.store_map_url || '',
             });
+            setSizeChartData(parseSizeChart(settings));
         }
     }, [settings]);
 
@@ -47,7 +52,10 @@ function SettingsContent() {
         e.preventDefault();
 
         try {
-            await updateSettings.mutateAsync(formData);
+            await updateSettings.mutateAsync({
+                ...formData,
+                size_chart: JSON.stringify(sizeChartData),
+            });
             toast.success('Settings saved successfully');
         } catch (error) {
             console.error('Settings error:', error);
@@ -193,6 +201,18 @@ function SettingsContent() {
                                     rows={3}
                                 />
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="store_map_url">Store Location Map URL</Label>
+                                <Input
+                                    id="store_map_url"
+                                    value={formData.store_map_url}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, store_map_url: e.target.value }))}
+                                    placeholder="e.g., https://maps.google.com/?q=28.6519,77.1900"
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    Google Maps URL for the &quot;Visit Store&quot; button on homepage. Use format: https://maps.google.com/?q=LATITUDE,LONGITUDE
+                                </p>
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -213,6 +233,75 @@ function SettingsContent() {
                                     onChange={(e) => setFormData(prev => ({ ...prev, min_order_default: e.target.value }))}
                                 />
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Size Chart */}
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <Ruler className="h-5 w-5 text-primary" />
+                                </div>
+                                <div>
+                                    <CardTitle>Size Chart</CardTitle>
+                                    <CardDescription>Edit T-shirt measurements (applies to all products)</CardDescription>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr className="border-b">
+                                            <th className="text-left py-2 px-3 font-semibold">Size</th>
+                                            <th className="text-center py-2 px-3 font-semibold">Chest</th>
+                                            <th className="text-center py-2 px-3 font-semibold">Length</th>
+                                            <th className="text-center py-2 px-3 font-semibold">Shoulder</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Object.entries(sizeChartData).map(([size, measurements]) => (
+                                            <tr key={size} className="border-b">
+                                                <td className="py-2 px-3 font-medium">{size}</td>
+                                                <td className="py-1 px-2">
+                                                    <Input
+                                                        value={measurements.chest}
+                                                        onChange={(e) => setSizeChartData(prev => ({
+                                                            ...prev,
+                                                            [size]: { ...prev[size], chest: e.target.value }
+                                                        }))}
+                                                        className="text-center h-8"
+                                                    />
+                                                </td>
+                                                <td className="py-1 px-2">
+                                                    <Input
+                                                        value={measurements.length}
+                                                        onChange={(e) => setSizeChartData(prev => ({
+                                                            ...prev,
+                                                            [size]: { ...prev[size], length: e.target.value }
+                                                        }))}
+                                                        className="text-center h-8"
+                                                    />
+                                                </td>
+                                                <td className="py-1 px-2">
+                                                    <Input
+                                                        value={measurements.shoulder}
+                                                        onChange={(e) => setSizeChartData(prev => ({
+                                                            ...prev,
+                                                            [size]: { ...prev[size], shoulder: e.target.value }
+                                                        }))}
+                                                        className="text-center h-8"
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-3">
+                                Measurements are displayed in the product detail modal for customers.
+                            </p>
                         </CardContent>
                     </Card>
 

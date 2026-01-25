@@ -69,7 +69,7 @@ export const CATEGORIES: { id: ProductCategory; name: string; icon: string; desc
     { id: 'downshoulder', name: 'Drop Shoulder', icon: '👕', description: 'Drop shoulder style' },
 ];
 
-export const SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'] as const;
+export const SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'] as const;
 
 export const TAGS: { value: ProductTag; label: string }[] = [
     { value: 'new', label: 'New' },

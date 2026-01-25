@@ -1,17 +1,18 @@
+'use client';
+
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function ContactSection() {
-    const contacts = {
-        farman: { name: 'Farman', phone: '9599965931', whatsapp: '919599965931' },
-        rohit: { name: 'Rohit', phone: '9582142143', whatsapp: '919582142143' },
-    };
+    const { data: settings } = useSiteSettings();
 
-    const businessInfo = {
-        address: 'H-16/86 Gali No 4, Tank Road, Near Bhalle Wale, Karol Bagh, New Delhi - 110005',
-        email: 'contact@tomwhite.in',
-        hours: 'Mon - Sat: 10:00 AM - 8:00 PM',
-    };
+    // Extract phone numbers from WhatsApp format (with country code)
+    const primaryPhone = settings?.whatsapp_primary?.slice(-10) || '9599965931';
+    const secondaryPhone = settings?.whatsapp_secondary?.slice(-10) || '9582142143';
+    const primaryWhatsApp = settings?.whatsapp_primary || '919599965931';
+    const businessAddress = settings?.business_address || 'H-16/86 Gali No 4, Tank Road, Near Bhalle Wale, Karol Bagh, New Delhi - 110005';
+    const businessEmail = settings?.business_email || 'contact@tomwhite.in';
 
     return (
         <section id="contact" className="py-12 sm:py-16 bg-muted/30">
@@ -37,7 +38,7 @@ export function ContactSection() {
                                 </div>
                                 <div>
                                     <p className="font-medium">Address</p>
-                                    <p className="text-sm text-muted-foreground">{businessInfo.address}</p>
+                                    <p className="text-sm text-muted-foreground">{businessAddress}</p>
                                 </div>
                             </div>
 
@@ -48,10 +49,10 @@ export function ContactSection() {
                                 <div>
                                     <p className="font-medium">Phone</p>
                                     <p className="text-sm text-muted-foreground">
-                                        {contacts.farman.name}: {contacts.farman.phone}
+                                        Primary: {primaryPhone}
                                     </p>
                                     <p className="text-sm text-muted-foreground">
-                                        {contacts.rohit.name}: {contacts.rohit.phone}
+                                        Secondary: {secondaryPhone}
                                     </p>
                                 </div>
                             </div>
@@ -62,7 +63,7 @@ export function ContactSection() {
                                 </div>
                                 <div>
                                     <p className="font-medium">Email</p>
-                                    <p className="text-sm text-muted-foreground">{businessInfo.email}</p>
+                                    <p className="text-sm text-muted-foreground">{businessEmail}</p>
                                 </div>
                             </div>
 
@@ -72,7 +73,7 @@ export function ContactSection() {
                                 </div>
                                 <div>
                                     <p className="font-medium">Business Hours</p>
-                                    <p className="text-sm text-muted-foreground">{businessInfo.hours}</p>
+                                    <p className="text-sm text-muted-foreground">Mon - Sat: 10:00 AM - 8:00 PM</p>
                                 </div>
                             </div>
                         </div>
@@ -83,11 +84,11 @@ export function ContactSection() {
                                 className="flex-1 bg-[oklch(var(--whatsapp))] hover:bg-[oklch(var(--whatsapp))]/90 text-white"
                             >
                                 <a
-                                    href={`https://wa.me/${contacts.farman.whatsapp}`}
+                                    href={`https://wa.me/${primaryWhatsApp}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    WhatsApp {contacts.farman.name}
+                                    WhatsApp
                                 </a>
                             </Button>
                             <Button
@@ -95,7 +96,7 @@ export function ContactSection() {
                                 variant="outline"
                                 className="flex-1"
                             >
-                                <a href={`tel:${contacts.farman.phone}`}>
+                                <a href={`tel:${primaryPhone}`}>
                                     Call Now
                                 </a>
                             </Button>
@@ -127,3 +128,4 @@ export function ContactSection() {
         </section>
     );
 }
+

@@ -1,7 +1,10 @@
 'use client';
 
+import { useSiteSettings } from '@/hooks/useSiteSettings';
+
 export function WhatsAppFAB() {
-    const whatsappNumber = '919599965931';
+    const { data: settings } = useSiteSettings();
+    const whatsappNumber = settings?.whatsapp_primary || '919599965931';
 
     const getWhatsAppLink = () => {
         const message = encodeURIComponent(
@@ -24,3 +27,4 @@ export function WhatsAppFAB() {
         </a>
     );
 }
+

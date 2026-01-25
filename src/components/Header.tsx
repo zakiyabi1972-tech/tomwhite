@@ -4,23 +4,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-const businessInfo = {
-    name: 'Tom White',
-    tagline: 'Premium Wholesale T-Shirts',
-    location: 'Karol Bagh, New Delhi',
-};
-
-const contacts = {
-    farman: {
-        name: 'Farman',
-        phone: '9599965931',
-        whatsapp: '919599965931',
-    },
-};
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { data: settings } = useSiteSettings();
+
+    // Extract phone number from whatsapp_primary (remove country code for display)
+    const primaryPhone = settings?.whatsapp_primary?.slice(-10) || '9599965931';
+    const businessName = settings?.business_name || 'Tom White';
 
     return (
         <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border">
@@ -29,16 +21,16 @@ export function Header() {
                 <div className="container mx-auto flex items-center justify-between text-xs sm:text-sm">
                     <div className="flex items-center gap-2">
                         <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span className="hidden sm:inline">{businessInfo.location}</span>
+                        <span className="hidden sm:inline">Karol Bagh, New Delhi</span>
                         <span className="sm:hidden">New Delhi</span>
                     </div>
                     <div className="flex items-center gap-4">
                         <a
-                            href={`tel:${contacts.farman.phone}`}
+                            href={`tel:${primaryPhone}`}
                             className="flex items-center gap-1 hover:text-accent transition-colors"
                         >
                             <Phone className="h-3 w-3" />
-                            <span>{contacts.farman.phone}</span>
+                            <span>{primaryPhone}</span>
                         </a>
                         <span className="text-primary-foreground/50">|</span>
                         <Link
@@ -60,8 +52,8 @@ export function Header() {
                             <span className="text-primary-foreground font-display font-bold text-xl">TW</span>
                         </div>
                         <div className="hidden sm:block">
-                            <h1 className="font-display font-bold text-lg leading-tight">{businessInfo.name}</h1>
-                            <p className="text-xs text-muted-foreground">{businessInfo.tagline}</p>
+                            <h1 className="font-display font-bold text-lg leading-tight">{businessName}</h1>
+                            <p className="text-xs text-muted-foreground">Premium Wholesale T-Shirts</p>
                         </div>
                     </Link>
 

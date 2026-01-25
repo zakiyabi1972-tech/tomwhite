@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { LazyImage } from './LazyImage';
 import type { ProductWithImages } from '@/types/database';
 import { formatPriceRange } from '@/types/database';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 // Placeholder image for products without images
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
@@ -18,7 +19,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onOpenDetail }: ProductCardProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const whatsappNumber = '919599965931';
+    const { data: settings } = useSiteSettings();
+    const whatsappNumber = settings?.whatsapp_primary || '919599965931';
 
     // Get image URLs or use placeholder - ensure no empty strings
     const imageUrls = product.images && product.images.length > 0

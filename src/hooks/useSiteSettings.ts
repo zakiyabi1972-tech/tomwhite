@@ -12,7 +12,19 @@ interface SiteSettingsData {
     currency_symbol: string;
     min_order_default: string;
     search_enabled: string; // 'true' or 'false' as string
+    size_chart: string; // JSON string containing size measurements
+    store_map_url: string; // Google Maps / Apple Maps URL for store location
 }
+
+const DEFAULT_SIZE_CHART = {
+    S: { chest: '36"', length: '26"', shoulder: '16"' },
+    M: { chest: '38"', length: '27"', shoulder: '17"' },
+    L: { chest: '40"', length: '28"', shoulder: '18"' },
+    XL: { chest: '42"', length: '29"', shoulder: '19"' },
+    XXL: { chest: '44"', length: '30"', shoulder: '20"' },
+    XXXL: { chest: '46"', length: '31"', shoulder: '21"' },
+    XXXXL: { chest: '48"', length: '32"', shoulder: '22"' },
+};
 
 const DEFAULT_SETTINGS: SiteSettingsData = {
     whatsapp_primary: '919599965931',
@@ -23,6 +35,8 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
     currency_symbol: '₹',
     min_order_default: '50',
     search_enabled: 'false', // Default: search is OFF
+    size_chart: JSON.stringify(DEFAULT_SIZE_CHART),
+    store_map_url: 'https://maps.google.com/?q=28.6519,77.1900', // Karol Bagh, New Delhi coordinates
 };
 
 export function useSiteSettings() {
@@ -77,4 +91,28 @@ export function useUpdateSiteSettings() {
 // Helper function to check if search is enabled
 export function isSearchEnabled(settings: SiteSettingsData | undefined): boolean {
     return settings?.search_enabled === 'true';
+}
+
+// Helper type for size chart
+export interface SizeChartEntry {
+    chest: string;
+    length: string;
+    shoulder: string;
+}
+
+export type SizeChartData = Record<string, SizeChartEntry>;
+
+// Export default size chart for admin UI
+export { DEFAULT_SIZE_CHART };
+
+// Helper function to parse size chart from settings
+export function parseSizeChart(settings: SiteSettingsData | undefined): SizeChartData {
+    if (!settings?.size_chart) {
+        return DEFAULT_SIZE_CHART;
+    }
+    try {
+        return JSON.parse(settings.size_chart);
+    } catch {
+        return DEFAULT_SIZE_CHART;
+    }
 }
