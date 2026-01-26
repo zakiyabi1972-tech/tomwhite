@@ -1,17 +1,18 @@
 'use client';
 
 import { CategoryCard } from './CategoryCard';
+import type { ProductCategory } from '@/types/database';
 
-const CATEGORIES = [
-    { id: 'plain', name: 'Plain', icon: '⬤' },
-    { id: 'printed', name: 'Printed', icon: '🎨' },
-    { id: 'embossed', name: 'Embossed', icon: '🔲' },
-    { id: 'embroidered', name: 'Embroidered', icon: '🧵' },
-    { id: 'collar', name: 'Collar/Polo', icon: '👔' },
-    { id: 'knitted', name: 'Knitted', icon: '🧶' },
-    { id: 'silicon', name: 'Silicon', icon: '💧' },
-    { id: 'patch', name: 'Patch', icon: '🏷️' },
-    { id: 'downshoulder', name: 'Down Shoulder', icon: '👕' },
+const CATEGORIES: { id: ProductCategory; name: string }[] = [
+    { id: 'plain', name: 'Plain' },
+    { id: 'printed', name: 'Printed' },
+    { id: 'embossed', name: 'Embossed' },
+    { id: 'embroidered', name: 'Embroidered' },
+    { id: 'collar', name: 'Collar/Polo' },
+    { id: 'knitted', name: 'Knitted' },
+    { id: 'silicon', name: 'Silicon' },
+    { id: 'patch', name: 'Patch' },
+    { id: 'downshoulder', name: 'Drop Shoulder' },
 ];
 
 interface CategoriesSectionProps {
@@ -52,11 +53,11 @@ export function CategoriesSection({
                     </p>
                 </div>
 
-                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-9 gap-3 sm:gap-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-9 gap-2 sm:gap-3">
                     {CATEGORIES.map((category) => (
                         <CategoryCard
                             key={category.id}
-                            icon={category.icon}
+                            category={category.id}
                             name={category.name}
                             count={categoryCounts[category.id]}
                             isSelected={selectedCategory === category.id}
