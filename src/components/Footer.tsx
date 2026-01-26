@@ -10,14 +10,12 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                     {/* Brand */}
                     <div className="md:col-span-1">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-10 h-10 bg-primary-foreground rounded-lg flex items-center justify-center">
-                                <span className="text-primary font-display font-bold text-xl">TW</span>
-                            </div>
-                            <div>
-                                <p className="font-display font-bold text-lg">Tom White</p>
-                                <p className="text-xs text-primary-foreground/70">Premium Wholesale T-Shirts</p>
-                            </div>
+                        <div className="mb-4">
+                            <img
+                                src="/logo-light.png"
+                                alt="Tom White - Premium Wholesale T-Shirts"
+                                className="h-12 w-auto"
+                            />
                         </div>
                         <p className="text-sm text-primary-foreground/80">
                             Your trusted partner for wholesale T-shirts from Karol Bagh, New Delhi.

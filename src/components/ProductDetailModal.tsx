@@ -49,15 +49,12 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
     function getProductWhatsAppLink(): string {
         const priceRange = formatPriceRange(product!.price_min, product!.price_max);
         const message = encodeURIComponent(
-            `Hi, I'm interested in:\n\n` +
-            `📦 *${product!.article_name}*\n` +
-            `📋 Category: ${product!.category}\n` +
-            `🏷️ Price: ${priceRange}\n` +
-            `📊 GSM: ${product!.gsm}\n` +
-            `🧵 Fabric: ${product!.fabric_name}\n` +
-            `📐 Sizes: ${product!.sizes.join(', ')}\n` +
-            `🎨 Colors: ${product!.colors.join(', ')}\n` +
-            `📦 Min Order: ${product!.min_order} pcs\n\n` +
+            `Hi, I'm interested in this product:\n\n` +
+            `*${product!.article_name}*\n` +
+            `----------------------------------\n` +
+            `Category: ${product!.category}\n` +
+            `Price: ${priceRange}\n` +
+            `GSM: ${product!.gsm}\n\n` +
             `Please share more details.`
         );
         return `https://wa.me/${whatsappNumber}?text=${message}`;

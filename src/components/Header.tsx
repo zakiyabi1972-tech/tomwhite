@@ -44,17 +44,15 @@ export function Header() {
             </div>
 
             {/* Main Header */}
-            <div className="container mx-auto py-4 px-4">
+            <div className="container mx-auto py-2 sm:py-4 px-4">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                            <span className="text-primary-foreground font-display font-bold text-xl">TW</span>
-                        </div>
-                        <div className="hidden sm:block">
-                            <h1 className="font-display font-bold text-lg leading-tight">{businessName}</h1>
-                            <p className="text-xs text-muted-foreground">Premium Wholesale T-Shirts</p>
-                        </div>
+                    <Link href="/" className="flex items-center">
+                        <img
+                            src="/logo-dark.png"
+                            alt="Tom White - Premium Wholesale T-Shirts"
+                            className="h-10 sm:h-12 w-auto"
+                        />
                     </Link>
 
                     {/* Desktop Navigation */}
