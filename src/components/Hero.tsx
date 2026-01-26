@@ -16,6 +16,9 @@ export function Hero() {
                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/50 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
             </div>
 
+            {/* Dark Overlay for Better Text Contrast */}
+            <div className="absolute inset-0 bg-black/20" />
+
             <div className="container mx-auto relative py-16 sm:py-24 lg:py-32 px-4">
                 <div className="max-w-3xl mx-auto text-center">
                     {/* Badge */}

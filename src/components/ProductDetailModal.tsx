@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Package, Ruler, Palette, Scale, Info, ChevronLeft, ChevronRight, Phone } from 'lucide-react';
+import { Package, Ruler, Palette, Scale, Info, ChevronLeft, ChevronRight, Phone, ChevronDown } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,7 @@ interface ProductDetailModalProps {
 
 export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailModalProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [sizeChartOpen, setSizeChartOpen] = useState(false);
     const { data: settings } = useSiteSettings();
     const whatsappNumber = settings?.whatsapp_primary || '919599965931';
     const sizeChart = parseSizeChart(settings);
@@ -69,7 +70,7 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
                 setCurrentImageIndex(0);
             }
         }}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
                 <DialogHeader>
                     <DialogTitle className="font-display text-xl">{product.article_name}</DialogTitle>
                 </DialogHeader>
@@ -237,13 +238,20 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
                     </div>
                 </div>
 
-                {/* Size Chart */}
+                {/* Size Chart - Collapsible */}
                 <div className="mt-6 border-t pt-6">
-                    <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-4 flex items-center gap-2">
-                        <Ruler className="h-4 w-4" />
-                        Size Chart
-                    </h4>
-                    <div className="overflow-x-auto">
+                    <button
+                        type="button"
+                        onClick={() => setSizeChartOpen(!sizeChartOpen)}
+                        className="w-full font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-2 flex items-center justify-between gap-2 hover:text-foreground transition-colors"
+                    >
+                        <span className="flex items-center gap-2">
+                            <Ruler className="h-4 w-4" />
+                            Size Chart
+                        </span>
+                        <ChevronDown className={cn("h-4 w-4 transition-transform", sizeChartOpen && "rotate-180")} />
+                    </button>
+                    <div className={cn("overflow-hidden transition-all duration-300", sizeChartOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0")}>
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b">
