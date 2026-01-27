@@ -51,7 +51,7 @@ export function Header() {
                         <img
                             src="/logo-dark.png"
                             alt="Tom White - Premium Wholesale T-Shirts"
-                            className="h-10 sm:h-12 w-auto"
+                            className="h-9 sm:h-11 w-auto"
                         />
                     </Link>
 

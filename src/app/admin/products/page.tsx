@@ -128,12 +128,7 @@ function ProductsContent() {
                             <Link href="/admin" className="text-muted-foreground hover:text-foreground">
                                 <ArrowLeft className="h-5 w-5" />
                             </Link>
-                            <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                                    <span className="text-primary-foreground font-display font-bold text-sm">TW</span>
-                                </div>
-                                <span className="font-display font-semibold">Products</span>
-                            </div>
+                            <span className="font-display font-semibold">Products</span>
                         </div>
 
                         <div className="flex items-center gap-4">
@@ -203,7 +198,7 @@ function ProductsContent() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-12">
+                                    <TableHead className="w-10 px-2">
                                         <Checkbox
                                             checked={selectedIds.size === filteredProducts.length && filteredProducts.length > 0}
                                             onCheckedChange={toggleSelectAll}
@@ -213,23 +208,23 @@ function ProductsContent() {
                                     <TableHead className="hidden sm:table-cell">Category</TableHead>
                                     <TableHead className="hidden md:table-cell">GSM</TableHead>
                                     <TableHead className="hidden lg:table-cell">Price</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
+                                    <TableHead className="hidden sm:table-cell">Status</TableHead>
+                                    <TableHead className="w-20 text-right pr-2">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {filteredProducts.map((product) => (
                                     <TableRow key={product.id}>
-                                        <TableCell>
+                                        <TableCell className="px-2">
                                             <Checkbox
                                                 checked={selectedIds.has(product.id)}
                                                 onCheckedChange={() => toggleSelect(product.id)}
                                             />
                                         </TableCell>
-                                        <TableCell>
-                                            <div>
-                                                <p className="font-medium">{product.article_name}</p>
-                                                <p className="text-sm text-muted-foreground sm:hidden">{product.category}</p>
+                                        <TableCell className="max-w-[140px] sm:max-w-[200px]">
+                                            <div className="min-w-0">
+                                                <p className="font-medium truncate">{product.article_name}</p>
+                                                <p className="text-sm text-muted-foreground truncate sm:hidden">{product.category}</p>
                                             </div>
                                         </TableCell>
                                         <TableCell className="hidden sm:table-cell capitalize">{product.category}</TableCell>
@@ -237,16 +232,16 @@ function ProductsContent() {
                                         <TableCell className="hidden lg:table-cell">
                                             {formatPriceRange(product.price_min, product.price_max)}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="hidden sm:table-cell">
                                             <button onClick={() => handleToggleActive(product.id, product.is_active ?? true)}>
                                                 <Badge variant={product.is_active ? 'default' : 'secondary'}>
                                                     {product.is_active ? 'Active' : 'Inactive'}
                                                 </Badge>
                                             </button>
                                         </TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <Button asChild variant="ghost" size="icon">
+                                        <TableCell className="text-right pr-2">
+                                            <div className="flex items-center justify-end gap-1">
+                                                <Button asChild variant="ghost" size="icon" className="h-8 w-8">
                                                     <Link href={`/admin/products/${product.id}`}>
                                                         <Edit className="h-4 w-4" />
                                                     </Link>
@@ -254,6 +249,7 @@ function ProductsContent() {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
+                                                    className="h-8 w-8"
                                                     onClick={() => {
                                                         setProductToDelete(product.id);
                                                         setDeleteDialogOpen(true);

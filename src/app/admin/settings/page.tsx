@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, LogOut, Loader2, Search, Ruler } from 'lucide-react';
+import { ArrowLeft, LogOut, Loader2, Search, Ruler, Smartphone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSiteSettings, useUpdateSiteSettings, parseSizeChart, DEFAULT_SIZE_CHART, SizeChartData } from '@/hooks/useSiteSettings';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
@@ -28,6 +28,10 @@ function SettingsContent() {
         min_order_default: '50',
         search_enabled: 'false',
         store_map_url: '',
+        category_scrollable: 'false',
+        business_hours: '',
+        store_location_name: '',
+        google_maps_embed_url: '',
     });
 
     const [sizeChartData, setSizeChartData] = useState<SizeChartData>(DEFAULT_SIZE_CHART);
@@ -43,6 +47,10 @@ function SettingsContent() {
                 min_order_default: settings.min_order_default,
                 search_enabled: settings.search_enabled || 'false',
                 store_map_url: settings.store_map_url || '',
+                category_scrollable: settings.category_scrollable || 'false',
+                business_hours: settings.business_hours || '',
+                store_location_name: settings.store_location_name || '',
+                google_maps_embed_url: settings.google_maps_embed_url || '',
             });
             setSizeChartData(parseSizeChart(settings));
         }
@@ -65,6 +73,10 @@ function SettingsContent() {
 
     const handleSearchToggle = (checked: boolean) => {
         setFormData(prev => ({ ...prev, search_enabled: checked ? 'true' : 'false' }));
+    };
+
+    const handleCategoryLayoutToggle = (checked: boolean) => {
+        setFormData(prev => ({ ...prev, category_scrollable: checked ? 'true' : 'false' }));
     };
 
     if (isLoading) {
@@ -129,6 +141,28 @@ function SettingsContent() {
                                     id="search_enabled"
                                     checked={formData.search_enabled === 'true'}
                                     onCheckedChange={handleSearchToggle}
+                                />
+                            </div>
+
+                            {/* Scrollable Categories Toggle */}
+                            <div className="flex items-center justify-between pt-4 border-t">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <Smartphone className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="category_scrollable" className="text-base font-medium">
+                                            Mobile Scrollable Categories
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Show swipeable category strip on mobile devices
+                                        </p>
+                                    </div>
+                                </div>
+                                <Switch
+                                    id="category_scrollable"
+                                    checked={formData.category_scrollable === 'true'}
+                                    onCheckedChange={handleCategoryLayoutToggle}
                                 />
                             </div>
                         </CardContent>
@@ -202,6 +236,27 @@ function SettingsContent() {
                                 />
                             </div>
                             <div className="space-y-2">
+                                <Label htmlFor="business_hours">Business Hours</Label>
+                                <Input
+                                    id="business_hours"
+                                    value={formData.business_hours}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, business_hours: e.target.value }))}
+                                    placeholder="e.g., Mon - Sat: 10:00 AM - 8:00 PM"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="store_location_name">Store Location Name</Label>
+                                <Input
+                                    id="store_location_name"
+                                    value={formData.store_location_name}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, store_location_name: e.target.value }))}
+                                    placeholder="e.g., Karol Bagh, New Delhi"
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    Short location name displayed on the map section
+                                </p>
+                            </div>
+                            <div className="space-y-2">
                                 <Label htmlFor="store_map_url">Store Location Map URL</Label>
                                 <Input
                                     id="store_map_url"
@@ -210,7 +265,20 @@ function SettingsContent() {
                                     placeholder="e.g., https://maps.google.com/?q=28.6519,77.1900"
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Google Maps URL for the &quot;Visit Store&quot; button on homepage. Use format: https://maps.google.com/?q=LATITUDE,LONGITUDE
+                                    Google Maps URL for the &quot;Get Directions&quot; button
+                                </p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="google_maps_embed_url">Google Maps Embed URL</Label>
+                                <Textarea
+                                    id="google_maps_embed_url"
+                                    value={formData.google_maps_embed_url}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, google_maps_embed_url: e.target.value }))}
+                                    placeholder="Paste the Google Maps embed URL here"
+                                    rows={3}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    To get this: Go to Google Maps → Search your location → Click Share → Embed a map → Copy the src URL from the iframe code
                                 </p>
                             </div>
                         </CardContent>

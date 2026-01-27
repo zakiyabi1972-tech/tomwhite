@@ -23,17 +23,21 @@ interface CategoryCardProps {
     count?: number;
     isSelected: boolean;
     onClick: () => void;
+    compact?: boolean; // For scrollable horizontal view
 }
 
-export function CategoryCard({ category, name, count, isSelected, onClick }: CategoryCardProps) {
+export function CategoryCard({ category, name, count, isSelected, onClick, compact }: CategoryCardProps) {
     const iconPath = CATEGORY_ICONS[category] || '/icons/plain.png';
 
     return (
         <button
             onClick={onClick}
             className={cn(
-                // Square card with centered content
-                "aspect-square flex flex-col items-center justify-center gap-1",
+                // Compact mode: fixed width for horizontal scroll
+                // Default mode: aspect-square for grid
+                compact
+                    ? "w-24 h-28 flex flex-col items-center justify-center gap-1"
+                    : "aspect-square flex flex-col items-center justify-center gap-1",
                 // Equal padding all around
                 "p-2 rounded-lg sm:rounded-xl border transition-all duration-200",
                 "hover:shadow-hover hover:border-accent/50 hover:-translate-y-0.5",
@@ -43,18 +47,24 @@ export function CategoryCard({ category, name, count, isSelected, onClick }: Cat
             )}
         >
             {/* Icon - larger size for visibility */}
-            <div className="w-14 h-14 sm:w-[60px] sm:h-[60px] relative">
+            <div className={cn(
+                "relative",
+                compact ? "w-12 h-12" : "w-14 h-14 sm:w-[60px] sm:h-[60px]"
+            )}>
                 <Image
                     src={iconPath}
                     alt={name}
                     fill
                     className="object-contain opacity-80 mix-blend-multiply dark:invert dark:mix-blend-normal"
-                    sizes="(max-width: 640px) 56px, 60px"
+                    sizes={compact ? "48px" : "(max-width: 640px) 56px, 60px"}
                 />
             </div>
             {/* Text - compact */}
             <div className="text-center">
-                <h3 className="font-display font-semibold text-[13px] sm:text-sm leading-tight">
+                <h3 className={cn(
+                    "font-display font-semibold leading-tight",
+                    compact ? "text-xs" : "text-[13px] sm:text-sm"
+                )}>
                     {name}
                 </h3>
                 {count !== undefined && count > 0 && (

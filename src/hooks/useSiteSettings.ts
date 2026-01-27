@@ -14,6 +14,10 @@ interface SiteSettingsData {
     search_enabled: string; // 'true' or 'false' as string
     size_chart: string; // JSON string containing size measurements
     store_map_url: string; // Google Maps / Apple Maps URL for store location
+    category_scrollable: string; // 'true' or 'false' - enables horizontal scroll for categories
+    business_hours: string; // Display text for business hours
+    store_location_name: string; // Short location name (e.g., "Karol Bagh, New Delhi")
+    google_maps_embed_url: string; // Google Maps iframe embed URL
 }
 
 const DEFAULT_SIZE_CHART = {
@@ -31,12 +35,16 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
     whatsapp_secondary: '919582142143',
     business_name: 'Tom White',
     business_address: 'H-16/86 Gali No 4, Tank Road, Near Bhalle Wale, Karol Bagh, New Delhi - 110005',
-    business_email: '',
+    business_email: 'contact@tomwhite.in',
     currency_symbol: '₹',
     min_order_default: '50',
     search_enabled: 'false', // Default: search is OFF
     size_chart: JSON.stringify(DEFAULT_SIZE_CHART),
     store_map_url: 'https://maps.google.com/?q=28.6519,77.1900', // Karol Bagh, New Delhi coordinates
+    category_scrollable: 'false', // Default: grid layout
+    business_hours: 'Mon - Sat: 10:00 AM - 8:00 PM',
+    store_location_name: 'Karol Bagh, New Delhi',
+    google_maps_embed_url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.5831093405147!2d77.18774507550176!3d28.651923775658!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d029e2c80a7a7%3A0x2b5e1a3aab6e4a75!2sKarol%20Bagh%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1706320000000!5m2!1sen!2sin',
 };
 
 export function useSiteSettings() {
@@ -91,6 +99,11 @@ export function useUpdateSiteSettings() {
 // Helper function to check if search is enabled
 export function isSearchEnabled(settings: SiteSettingsData | undefined): boolean {
     return settings?.search_enabled === 'true';
+}
+
+// Helper function to check if scrollable categories is enabled
+export function isCategoryScrollable(settings: SiteSettingsData | undefined): boolean {
+    return settings?.category_scrollable === 'true';
 }
 
 // Helper type for size chart
