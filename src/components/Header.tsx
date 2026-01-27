@@ -13,6 +13,7 @@ export function Header() {
     // Extract phone number from whatsapp_primary (remove country code for display)
     const primaryPhone = settings?.whatsapp_primary?.slice(-10) || '9599965931';
     const businessName = settings?.business_name || 'Tom White';
+    const storeLocationName = settings?.store_location_name || 'Karol Bagh, New Delhi';
 
     return (
         <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border">
@@ -21,7 +22,7 @@ export function Header() {
                 <div className="container mx-auto flex items-center justify-between text-xs sm:text-sm">
                     <div className="flex items-center gap-2">
                         <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span className="hidden sm:inline">Karol Bagh, New Delhi</span>
+                        <span className="hidden sm:inline">{storeLocationName}</span>
                         <span className="sm:hidden">New Delhi</span>
                     </div>
                     <div className="flex items-center gap-4">
@@ -50,7 +51,7 @@ export function Header() {
                     <Link href="/" className="flex items-center">
                         <img
                             src="/logo-dark.png"
-                            alt="Tom White - Premium Wholesale T-Shirts"
+                            alt={`${businessName} - Premium Wholesale T-Shirts`}
                             className="h-9 sm:h-11 w-auto"
                         />
                     </Link>

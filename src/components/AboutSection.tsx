@@ -1,6 +1,13 @@
+'use client';
+
 import { Building2, Award, Truck, Users } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function AboutSection() {
+    const { data: settings } = useSiteSettings();
+    const businessName = settings?.business_name || 'Tom White';
+    const storeLocationName = settings?.store_location_name || 'Karol Bagh, New Delhi';
+
     const features = [
         {
             icon: Building2,
@@ -29,10 +36,10 @@ export function AboutSection() {
             <div className="container mx-auto px-4">
                 <div className="max-w-3xl mx-auto text-center mb-10">
                     <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
-                        About Tom White
+                        About {businessName}
                     </h2>
                     <p className="text-muted-foreground">
-                        Your trusted partner for wholesale T-shirts from Karol Bagh, New Delhi.
+                        Your trusted partner for wholesale T-shirts from {storeLocationName}.
                         We specialize in providing high-quality fabrics at wholesale prices.
                     </p>
                 </div>

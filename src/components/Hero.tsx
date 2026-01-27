@@ -7,6 +7,7 @@ import { useSiteSettings } from '@/hooks/useSiteSettings';
 export function Hero() {
     const { data: settings } = useSiteSettings();
     const storeMapUrl = settings?.store_map_url || 'https://maps.google.com/?q=28.6519,77.1900';
+    const storeLocationName = settings?.store_location_name || 'Karol Bagh, New Delhi';
 
     return (
         <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground">
@@ -27,7 +28,7 @@ export function Hero() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
                         </span>
-                        <span className="text-sm font-medium">Wholesale T-Shirts from Karol Bagh</span>
+                        <span className="text-sm font-medium">Wholesale T-Shirts from {storeLocationName}</span>
                     </div>
 
                     {/* Heading */}

@@ -1,8 +1,19 @@
+'use client';
+
 import Link from 'next/link';
 import { CATEGORIES } from '@/types/database';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function Footer() {
+    const { data: settings } = useSiteSettings();
     const currentYear = new Date().getFullYear();
+
+    // Get data from admin settings with fallbacks
+    const businessName = settings?.business_name || 'Tom White';
+    const storeLocationName = settings?.store_location_name || 'Karol Bagh, New Delhi';
+    const primaryPhone = settings?.whatsapp_primary?.slice(-10) || '9599965941';
+    const secondaryPhone = settings?.whatsapp_secondary?.slice(-10) || '9582142143';
+    const businessHours = settings?.business_hours || 'Mon - Sat: 10:00 AM - 8:00 PM';
 
     return (
         <footer className="bg-primary text-primary-foreground py-12">
@@ -13,12 +24,12 @@ export function Footer() {
                         <div className="mb-4">
                             <img
                                 src="/logo-light.png"
-                                alt="Tom White - Premium Wholesale T-Shirts"
+                                alt={`${businessName} - Premium Wholesale T-Shirts`}
                                 className="h-12 w-auto"
                             />
                         </div>
                         <p className="text-sm text-primary-foreground/80">
-                            Your trusted partner for wholesale T-shirts from Karol Bagh, New Delhi.
+                            Your trusted partner for wholesale T-shirts from {storeLocationName}.
                         </p>
                     </div>
 
@@ -75,16 +86,16 @@ export function Footer() {
                     <div>
                         <h4 className="font-display font-semibold mb-4">Contact</h4>
                         <ul className="space-y-2 text-sm text-primary-foreground/80">
-                            <li>📍 Karol Bagh, New Delhi</li>
-                            <li>📞 9599965931, 9582142143</li>
-                            <li>⏰ Mon - Sat: 10AM - 8PM</li>
+                            <li>📍 {storeLocationName}</li>
+                            <li>📞 {primaryPhone}, {secondaryPhone}</li>
+                            <li>⏰ {businessHours}</li>
                         </ul>
                     </div>
                 </div>
 
                 {/* Bottom Bar */}
                 <div className="border-t border-primary-foreground/20 pt-8 text-center text-sm text-primary-foreground/60">
-                    <p>© {currentYear} Tom White. All rights reserved.</p>
+                    <p>© {currentYear} {businessName}. All rights reserved.</p>
                     <p className="mt-2">
                         Made with ❤️ in India | Wholesale T-Shirts
                     </p>
