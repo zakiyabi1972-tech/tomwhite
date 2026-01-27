@@ -119,12 +119,15 @@ export type SizeChartData = Record<string, SizeChartEntry>;
 export { DEFAULT_SIZE_CHART };
 
 // Helper function to parse size chart from settings
+// Merges with DEFAULT_SIZE_CHART to ensure all sizes are present
 export function parseSizeChart(settings: SiteSettingsData | undefined): SizeChartData {
     if (!settings?.size_chart) {
         return DEFAULT_SIZE_CHART;
     }
     try {
-        return JSON.parse(settings.size_chart);
+        const parsed = JSON.parse(settings.size_chart);
+        // Merge with default to ensure all sizes exist (including XXXXL if missing)
+        return { ...DEFAULT_SIZE_CHART, ...parsed };
     } catch {
         return DEFAULT_SIZE_CHART;
     }

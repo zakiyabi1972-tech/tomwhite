@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, LogOut, Loader2, Search, Ruler, Smartphone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSiteSettings, useUpdateSiteSettings, parseSizeChart, DEFAULT_SIZE_CHART, SizeChartData } from '@/hooks/useSiteSettings';
+import { SIZES } from '@/types/database';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -329,41 +330,45 @@ function SettingsContent() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {Object.entries(sizeChartData).map(([size, measurements]) => (
-                                            <tr key={size} className="border-b">
-                                                <td className="py-2 px-3 font-medium">{size}</td>
-                                                <td className="py-1 px-2">
-                                                    <Input
-                                                        value={measurements.chest}
-                                                        onChange={(e) => setSizeChartData(prev => ({
-                                                            ...prev,
-                                                            [size]: { ...prev[size], chest: e.target.value }
-                                                        }))}
-                                                        className="text-center h-8"
-                                                    />
-                                                </td>
-                                                <td className="py-1 px-2">
-                                                    <Input
-                                                        value={measurements.length}
-                                                        onChange={(e) => setSizeChartData(prev => ({
-                                                            ...prev,
-                                                            [size]: { ...prev[size], length: e.target.value }
-                                                        }))}
-                                                        className="text-center h-8"
-                                                    />
-                                                </td>
-                                                <td className="py-1 px-2">
-                                                    <Input
-                                                        value={measurements.shoulder}
-                                                        onChange={(e) => setSizeChartData(prev => ({
-                                                            ...prev,
-                                                            [size]: { ...prev[size], shoulder: e.target.value }
-                                                        }))}
-                                                        className="text-center h-8"
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {SIZES.map((size) => {
+                                            const measurements = sizeChartData[size];
+                                            if (!measurements) return null;
+                                            return (
+                                                <tr key={size} className="border-b">
+                                                    <td className="py-2 px-3 font-medium">{size}</td>
+                                                    <td className="py-1 px-2">
+                                                        <Input
+                                                            value={measurements.chest}
+                                                            onChange={(e) => setSizeChartData(prev => ({
+                                                                ...prev,
+                                                                [size]: { ...prev[size], chest: e.target.value }
+                                                            }))}
+                                                            className="text-center h-8"
+                                                        />
+                                                    </td>
+                                                    <td className="py-1 px-2">
+                                                        <Input
+                                                            value={measurements.length}
+                                                            onChange={(e) => setSizeChartData(prev => ({
+                                                                ...prev,
+                                                                [size]: { ...prev[size], length: e.target.value }
+                                                            }))}
+                                                            className="text-center h-8"
+                                                        />
+                                                    </td>
+                                                    <td className="py-1 px-2">
+                                                        <Input
+                                                            value={measurements.shoulder}
+                                                            onChange={(e) => setSizeChartData(prev => ({
+                                                                ...prev,
+                                                                [size]: { ...prev[size], shoulder: e.target.value }
+                                                            }))}
+                                                            className="text-center h-8"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>

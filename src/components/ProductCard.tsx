@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LazyImage } from './LazyImage';
 import type { ProductWithImages } from '@/types/database';
-import { formatPriceRange } from '@/types/database';
+import { formatPriceRange, sortSizes } from '@/types/database';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 // Placeholder image for products without images
@@ -110,7 +110,7 @@ export function ProductCard({ product, onOpenDetail }: ProductCardProps) {
                 <div className="space-y-0.5 sm:space-y-2 mb-1.5 sm:mb-4 flex-1">
                     <div className="flex items-center gap-1 sm:gap-2 text-[11px] sm:text-sm text-muted-foreground">
                         <Ruler className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                        <span className="truncate">{product.sizes.join(', ')}</span>
+                        <span className="truncate">{sortSizes([...product.sizes]).join(', ')}</span>
                     </div>
                     <div className="flex items-center gap-1 sm:gap-2 text-[11px] sm:text-sm text-muted-foreground">
                         <Palette className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />

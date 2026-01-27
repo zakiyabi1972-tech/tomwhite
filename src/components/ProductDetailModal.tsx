@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { LazyImage } from './LazyImage';
 import { cn } from '@/lib/utils';
 import type { ProductWithImages } from '@/types/database';
-import { formatPriceRange } from '@/types/database';
+import { formatPriceRange, SIZES } from '@/types/database';
 import { useSiteSettings, parseSizeChart } from '@/hooks/useSiteSettings';
 
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
@@ -263,7 +263,9 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Object.entries(sizeChart).map(([size, measurements]) => {
+                                    {SIZES.map((size) => {
+                                        const measurements = sizeChart[size];
+                                        if (!measurements) return null;
                                         const isAvailable = product.sizes.includes(size);
                                         return (
                                             <tr key={size} className={cn("border-b", !isAvailable && "opacity-40")}>

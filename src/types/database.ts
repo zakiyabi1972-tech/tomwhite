@@ -71,6 +71,18 @@ export const CATEGORIES: { id: ProductCategory; name: string; icon: string; desc
 
 export const SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'] as const;
 
+// Helper to sort sizes in correct order
+export function sortSizes(sizes: string[]): string[] {
+    return sizes.sort((a, b) => {
+        const indexA = SIZES.indexOf(a as typeof SIZES[number]);
+        const indexB = SIZES.indexOf(b as typeof SIZES[number]);
+        // If size not found in SIZES, put it at the end
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+    });
+}
+
 export const TAGS: { value: ProductTag; label: string }[] = [
     { value: 'new', label: 'New' },
     { value: 'hot', label: 'Hot' },
