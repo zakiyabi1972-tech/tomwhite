@@ -208,6 +208,7 @@ function ProductsContent() {
                                     <TableHead className="hidden sm:table-cell">Category</TableHead>
                                     <TableHead className="hidden md:table-cell">GSM</TableHead>
                                     <TableHead className="hidden lg:table-cell">Price</TableHead>
+                                    <TableHead className="hidden xl:table-cell">Created</TableHead>
                                     <TableHead className="hidden sm:table-cell">Status</TableHead>
                                     <TableHead className="w-20 text-right pr-2">Actions</TableHead>
                                 </TableRow>
@@ -231,6 +232,15 @@ function ProductsContent() {
                                         <TableCell className="hidden md:table-cell">{product.gsm}</TableCell>
                                         <TableCell className="hidden lg:table-cell">
                                             {formatPriceRange(product.price_min, product.price_max)}
+                                        </TableCell>
+                                        <TableCell className="hidden xl:table-cell text-muted-foreground text-sm">
+                                            {product.created_at
+                                                ? new Date(product.created_at).toLocaleDateString('en-IN', {
+                                                    day: '2-digit',
+                                                    month: 'short',
+                                                    year: 'numeric'
+                                                })
+                                                : '—'}
                                         </TableCell>
                                         <TableCell className="hidden sm:table-cell">
                                             <button onClick={() => handleToggleActive(product.id, product.is_active ?? true)}>
