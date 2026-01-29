@@ -28,12 +28,12 @@ interface ProductFormProps {
 interface FormData {
     article_name: string;
     fabric_name: string;
-    gsm: number;
+    gsm: string;  // Store as string for better UX
     sizes: string[];
     colors: string[];
-    price_min: number;
-    price_max: number | null;
-    min_order: number;
+    price_min: string;  // Store as string for better UX
+    price_max: string;  // Store as string for better UX
+    min_order: string;  // Store as string for better UX
     description: string;
     category: ProductCategory;
     tag: ProductTag | null;
@@ -43,12 +43,12 @@ interface FormData {
 const initialFormData: FormData = {
     article_name: '',
     fabric_name: '',
-    gsm: 180,
+    gsm: '180',
     sizes: ['M', 'L', 'XL'],
     colors: [],
-    price_min: 0,
-    price_max: null,
-    min_order: 50,
+    price_min: '',
+    price_max: '',
+    min_order: '50',
     description: '',
     category: 'plain',
     tag: null,
@@ -75,12 +75,12 @@ function ProductFormContent({ productId }: ProductFormProps) {
             setFormData({
                 article_name: existingProduct.article_name,
                 fabric_name: existingProduct.fabric_name,
-                gsm: existingProduct.gsm,
+                gsm: String(existingProduct.gsm),
                 sizes: existingProduct.sizes,
                 colors: existingProduct.colors,
-                price_min: existingProduct.price_min,
-                price_max: existingProduct.price_max,
-                min_order: existingProduct.min_order,
+                price_min: String(existingProduct.price_min),
+                price_max: existingProduct.price_max ? String(existingProduct.price_max) : '',
+                min_order: String(existingProduct.min_order),
                 description: existingProduct.description || '',
                 category: existingProduct.category,
                 tag: existingProduct.tag,
@@ -179,7 +179,13 @@ function ProductFormContent({ productId }: ProductFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.article_name || !formData.fabric_name || formData.gsm < 100) {
+        // Convert string values to numbers for validation and submission
+        const gsmNum = parseInt(formData.gsm) || 0;
+        const priceMinNum = parseFloat(formData.price_min) || 0;
+        const priceMaxNum = formData.price_max ? parseFloat(formData.price_max) : null;
+        const minOrderNum = parseInt(formData.min_order) || 50;
+
+        if (!formData.article_name || !formData.fabric_name || gsmNum < 100) {
             toast.error('Please fill in all required fields');
             return;
         }
@@ -206,12 +212,12 @@ function ProductFormContent({ productId }: ProductFormProps) {
                     .update({
                         article_name: formData.article_name,
                         fabric_name: formData.fabric_name,
-                        gsm: formData.gsm,
+                        gsm: gsmNum,
                         sizes: formData.sizes,
                         colors: formData.colors,
-                        price_min: formData.price_min,
-                        price_max: formData.price_max,
-                        min_order: formData.min_order,
+                        price_min: priceMinNum,
+                        price_max: priceMaxNum,
+                        min_order: minOrderNum,
                         description: formData.description || null,
                         category: formData.category,
                         tag: formData.tag,
@@ -226,12 +232,12 @@ function ProductFormContent({ productId }: ProductFormProps) {
                     .insert({
                         article_name: formData.article_name,
                         fabric_name: formData.fabric_name,
-                        gsm: formData.gsm,
+                        gsm: gsmNum,
                         sizes: formData.sizes,
                         colors: formData.colors,
-                        price_min: formData.price_min,
-                        price_max: formData.price_max,
-                        min_order: formData.min_order,
+                        price_min: priceMinNum,
+                        price_max: priceMaxNum,
+                        min_order: minOrderNum,
                         description: formData.description || null,
                         category: formData.category,
                         tag: formData.tag,
@@ -418,7 +424,8 @@ function ProductFormContent({ productId }: ProductFormProps) {
                                         min={100}
                                         max={400}
                                         value={formData.gsm}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, gsm: parseInt(e.target.value) || 180 }))}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, gsm: e.target.value }))}
+                                        placeholder="180"
                                         required
                                     />
                                 </div>
@@ -538,7 +545,8 @@ function ProductFormContent({ productId }: ProductFormProps) {
                                         type="number"
                                         min={0}
                                         value={formData.price_min}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, price_min: parseFloat(e.target.value) || 0 }))}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, price_min: e.target.value }))}
+                                        placeholder="0"
                                         required
                                     />
                                 </div>
@@ -548,8 +556,8 @@ function ProductFormContent({ productId }: ProductFormProps) {
                                         id="price_max"
                                         type="number"
                                         min={0}
-                                        value={formData.price_max || ''}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, price_max: e.target.value ? parseFloat(e.target.value) : null }))}
+                                        value={formData.price_max}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, price_max: e.target.value }))}
                                         placeholder="Optional"
                                     />
                                 </div>
@@ -560,7 +568,8 @@ function ProductFormContent({ productId }: ProductFormProps) {
                                         type="number"
                                         min={1}
                                         value={formData.min_order}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, min_order: parseInt(e.target.value) || 50 }))}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, min_order: e.target.value }))}
+                                        placeholder="50"
                                         required
                                     />
                                 </div>
