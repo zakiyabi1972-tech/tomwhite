@@ -1,15 +1,7 @@
 // Database types for TopWhite Catalog
 
-export type ProductCategory =
-    | 'plain'
-    | 'printed'
-    | 'embossed'
-    | 'embroidered'
-    | 'collar'
-    | 'knitted'
-    | 'silicon'
-    | 'patch'
-    | 'downshoulder';
+// ProductCategory is now a string to support dynamic categories
+export type ProductCategory = string;
 
 export type ProductTag = 'new' | 'hot' | 'bestseller';
 
@@ -56,18 +48,49 @@ export interface UserRole {
     created_at: string | null;
 }
 
-// Category metadata for display
-export const CATEGORIES: { id: ProductCategory; name: string; icon: string; description: string }[] = [
-    { id: 'plain', name: 'Plain', icon: '◼', description: 'Solid color T-shirts' },
-    { id: 'printed', name: 'Printed', icon: '🎨', description: 'Printed designs' },
-    { id: 'embossed', name: 'Embossed', icon: '✦', description: 'Embossed texture' },
-    { id: 'embroidered', name: 'Embroidered', icon: '🧵', description: 'Thread embroidery' },
-    { id: 'collar', name: 'Collar', icon: '👔', description: 'Polo/collar T-shirts' },
-    { id: 'knitted', name: 'Knitted', icon: '🧶', description: 'Knitted fabric' },
-    { id: 'silicon', name: 'Silicon', icon: '💧', description: 'Silicon print' },
-    { id: 'patch', name: 'Patch', icon: '🏷', description: 'Patch-applied designs' },
-    { id: 'downshoulder', name: 'Drop Shoulder', icon: '👕', description: 'Drop shoulder style' },
+// Category interface for dynamic category management
+export interface Category {
+    slug: string;         // URL-friendly identifier
+    name: string;         // Display name
+    description: string;  // Category description
+    icon: string;         // Icon filename (e.g., 'plain.png')
+    order: number;        // Display order
+    active: boolean;      // Show/hide category
+}
+
+// Available icons in public/icons/ directory
+export const AVAILABLE_ICONS = [
+    'plain.png',
+    'printed.png',
+    'embossed.png',
+    'embroidered.png',
+    'collar.png',
+    'knitted.png',
+    'silicon.png',
+    'patch.png',
+    'downshoulder.png',
+] as const;
+
+// Default categories (used as fallback and for seeding)
+export const DEFAULT_CATEGORIES: Category[] = [
+    { slug: 'plain', name: 'Plain', icon: 'plain.png', description: 'Solid color T-shirts', order: 1, active: true },
+    { slug: 'printed', name: 'Printed', icon: 'printed.png', description: 'Printed designs', order: 2, active: true },
+    { slug: 'embossed', name: 'Embossed', icon: 'embossed.png', description: 'Embossed texture', order: 3, active: true },
+    { slug: 'embroidered', name: 'Embroidered', icon: 'embroidered.png', description: 'Thread embroidery', order: 4, active: true },
+    { slug: 'collar', name: 'Collar/Polo', icon: 'collar.png', description: 'Polo/collar T-shirts', order: 5, active: true },
+    { slug: 'knitted', name: 'Knitted', icon: 'knitted.png', description: 'Knitted fabric', order: 6, active: true },
+    { slug: 'silicon', name: 'Silicon', icon: 'silicon.png', description: 'Silicon print', order: 7, active: true },
+    { slug: 'patch', name: 'Patch', icon: 'patch.png', description: 'Patch-applied designs', order: 8, active: true },
+    { slug: 'downshoulder', name: 'Drop Shoulder', icon: 'downshoulder.png', description: 'Drop shoulder style', order: 9, active: true },
 ];
+
+// Legacy CATEGORIES export for backward compatibility
+export const CATEGORIES = DEFAULT_CATEGORIES.map(cat => ({
+    id: cat.slug as ProductCategory,
+    name: cat.name,
+    icon: cat.icon,
+    description: cat.description,
+}));
 
 export const SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'] as const;
 

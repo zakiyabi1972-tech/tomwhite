@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { Category, DEFAULT_CATEGORIES } from '@/types/database';
 
 interface SiteSettingsData {
     whatsapp_primary: string;
@@ -18,6 +19,7 @@ interface SiteSettingsData {
     business_hours: string; // Display text for business hours
     store_location_name: string; // Short location name (e.g., "Karol Bagh, New Delhi")
     google_maps_embed_url: string; // Google Maps iframe embed URL
+    categories: string; // JSON string containing category configuration
 }
 
 const DEFAULT_SIZE_CHART = {
@@ -45,6 +47,7 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
     business_hours: 'Mon - Sat: 10:00 AM - 8:00 PM',
     store_location_name: 'Karol Bagh, New Delhi',
     google_maps_embed_url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.5831093405147!2d77.18774507550176!3d28.651923775658!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d029e2c80a7a7%3A0x2b5e1a3aab6e4a75!2sKarol%20Bagh%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1706320000000!5m2!1sen!2sin',
+    categories: JSON.stringify(DEFAULT_CATEGORIES),
 };
 
 export function useSiteSettings() {
@@ -131,4 +134,23 @@ export function parseSizeChart(settings: SiteSettingsData | undefined): SizeChar
     } catch {
         return DEFAULT_SIZE_CHART;
     }
+}
+
+// Helper function to parse categories from settings
+export function parseCategories(settings: SiteSettingsData | undefined): Category[] {
+    if (!settings?.categories) {
+        return DEFAULT_CATEGORIES;
+    }
+    try {
+        const parsed = JSON.parse(settings.categories) as Category[];
+        // Sort by order and return
+        return parsed.sort((a, b) => a.order - b.order);
+    } catch {
+        return DEFAULT_CATEGORIES;
+    }
+}
+
+// Get only active categories sorted by order
+export function getActiveCategories(settings: SiteSettingsData | undefined): Category[] {
+    return parseCategories(settings).filter(cat => cat.active);
 }

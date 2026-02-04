@@ -19,7 +19,8 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { compressImage, validateImageFile } from '@/lib/imageCompression';
-import { CATEGORIES, SIZES, TAGS, type ProductCategory, type ProductTag } from '@/types/database';
+import { SIZES, TAGS, type ProductCategory, type ProductTag } from '@/types/database';
+import { useSiteSettings, parseCategories } from '@/hooks/useSiteSettings';
 
 interface ProductFormProps {
     productId?: string;
@@ -59,6 +60,7 @@ function ProductFormContent({ productId }: ProductFormProps) {
     const router = useRouter();
     const { user, signOut } = useAuth();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { data: settings } = useSiteSettings();
 
     const isEditMode = !!productId;
     const { data: existingProduct, isLoading: isLoadingProduct } = useProduct(productId || '');
@@ -439,9 +441,9 @@ function ProductFormContent({ productId }: ProductFormProps) {
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {CATEGORIES.map((cat) => (
-                                                <SelectItem key={cat.id} value={cat.id}>
-                                                    {cat.icon} {cat.name}
+                                            {parseCategories(settings).map((cat) => (
+                                                <SelectItem key={cat.slug} value={cat.slug}>
+                                                    {cat.name}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>

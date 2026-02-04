@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { CATEGORIES } from '@/types/database';
-import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useSiteSettings, getActiveCategories } from '@/hooks/useSiteSettings';
 
 export function Footer() {
     const { data: settings } = useSiteSettings();
     const currentYear = new Date().getFullYear();
+    const categories = getActiveCategories(settings);
 
     // Get data from admin settings with fallbacks
     const businessName = settings?.business_name || 'Tom White';
@@ -37,10 +37,10 @@ export function Footer() {
                     <div>
                         <h4 className="font-display font-semibold mb-4">Categories</h4>
                         <ul className="space-y-2 text-sm text-primary-foreground/80">
-                            {CATEGORIES.slice(0, 5).map((category) => (
-                                <li key={category.id}>
+                            {categories.slice(0, 5).map((category) => (
+                                <li key={category.slug}>
                                     <a
-                                        href={`#products?category=${category.id}`}
+                                        href={`#products?category=${category.slug}`}
                                         className="hover:text-[oklch(var(--accent))] transition-colors"
                                     >
                                         {category.name}

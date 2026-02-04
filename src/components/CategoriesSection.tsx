@@ -2,20 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { CategoryCard } from './CategoryCard';
-import { useSiteSettings, isCategoryScrollable } from '@/hooks/useSiteSettings';
-import type { ProductCategory } from '@/types/database';
-
-const CATEGORIES: { id: ProductCategory; name: string }[] = [
-    { id: 'plain', name: 'Plain' },
-    { id: 'printed', name: 'Printed' },
-    { id: 'embossed', name: 'Embossed' },
-    { id: 'embroidered', name: 'Embroidered' },
-    { id: 'collar', name: 'Collar/Polo' },
-    { id: 'knitted', name: 'Knitted' },
-    { id: 'silicon', name: 'Silicon' },
-    { id: 'patch', name: 'Patch' },
-    { id: 'downshoulder', name: 'Drop Shoulder' },
-];
+import { useSiteSettings, isCategoryScrollable, getActiveCategories } from '@/hooks/useSiteSettings';
 
 interface CategoriesSectionProps {
     selectedCategory: string | null;
@@ -30,6 +17,7 @@ export function CategoriesSection({
 }: CategoriesSectionProps) {
     const { data: settings } = useSiteSettings();
     const scrollableEnabled = isCategoryScrollable(settings);
+    const categories = getActiveCategories(settings);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [canScrollRight, setCanScrollRight] = useState(true);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -53,9 +41,9 @@ export function CategoriesSection({
         }
     }, [scrollableEnabled]);
 
-    const handleCategoryClick = (categoryId: string) => {
+    const handleCategoryClick = (categorySlug: string) => {
         // Toggle: if already selected, deselect; otherwise select
-        onSelectCategory(selectedCategory === categoryId ? null : categoryId);
+        onSelectCategory(selectedCategory === categorySlug ? null : categorySlug);
 
         // Smooth scroll to products section
         setTimeout(() => {
@@ -65,6 +53,10 @@ export function CategoriesSection({
             }
         }, 100);
     };
+
+    if (categories.length === 0) {
+        return null;
+    }
 
     return (
         <section id="categories" className="py-12 sm:py-16 bg-background">
@@ -86,88 +78,67 @@ export function CategoriesSection({
 
                 {/* Desktop Grid - Always visible on sm+ screens */}
                 <div className="hidden sm:grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-9 gap-2 sm:gap-3">
-                    {CATEGORIES.map((category) => (
+                    {categories.map((category) => (
                         <CategoryCard
-                            key={category.id}
-                            category={category.id}
+                            key={category.slug}
+                            slug={category.slug}
                             name={category.name}
-                            count={categoryCounts[category.id]}
-                            isSelected={selectedCategory === category.id}
-                            onClick={() => handleCategoryClick(category.id)}
+                            iconUrl={`/icons/${category.icon}`}
+                            count={categoryCounts[category.slug]}
+                            isSelected={selectedCategory === category.slug}
+                            onClick={() => handleCategoryClick(category.slug)}
                         />
                     ))}
                 </div>
 
-                {/* Mobile Layout - Only visible on screens below sm */}
-                <div className="sm:hidden">
-                    {scrollableEnabled ? (
-                        /* Mobile Scrollable Layout */
-                        <div className="relative">
-                            {/* Scroll Container */}
-                            <div
-                                ref={scrollContainerRef}
-                                className="flex gap-2 overflow-x-auto scrollbar-hide pb-2
-                                           scroll-smooth snap-x snap-mandatory"
-                            >
-                                {CATEGORIES.map((category) => (
-                                    <div key={category.id} className="snap-start flex-shrink-0">
-                                        <CategoryCard
-                                            category={category.id}
-                                            name={category.name}
-                                            count={categoryCounts[category.id]}
-                                            isSelected={selectedCategory === category.id}
-                                            onClick={() => handleCategoryClick(category.id)}
-                                            compact
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                {/* Mobile View - Conditional scrollable or grid */}
+                {scrollableEnabled ? (
+                    /* Scrollable horizontal view on mobile */
+                    <div className="sm:hidden relative">
+                        {/* Left gradient fade indicator */}
+                        {canScrollLeft && (
+                            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+                        )}
 
-                            {/* Left Fade Gradient - shows when can scroll left */}
-                            {canScrollLeft && (
-                                <div
-                                    className="absolute left-0 top-0 bottom-2 w-8 
-                                               bg-gradient-to-r from-background to-transparent 
-                                               pointer-events-none z-10"
-                                    aria-hidden="true"
-                                />
-                            )}
-
-                            {/* Right Fade Gradient - shows when can scroll right */}
-                            {canScrollRight && (
-                                <div
-                                    className="absolute right-0 top-0 bottom-2 w-8 
-                                               bg-gradient-to-l from-background to-transparent 
-                                               pointer-events-none z-10"
-                                    aria-hidden="true"
-                                />
-                            )}
-                        </div>
-                    ) : (
-                        /* Mobile Grid Layout (Default) */
-                        <div className="grid grid-cols-3 gap-2">
-                            {CATEGORIES.map((category) => (
+                        {/* Scrollable container */}
+                        <div
+                            ref={scrollContainerRef}
+                            className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide -mx-4 px-4"
+                            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        >
+                            {categories.map((category) => (
                                 <CategoryCard
-                                    key={category.id}
-                                    category={category.id}
+                                    key={category.slug}
+                                    slug={category.slug}
                                     name={category.name}
-                                    count={categoryCounts[category.id]}
-                                    isSelected={selectedCategory === category.id}
-                                    onClick={() => handleCategoryClick(category.id)}
+                                    iconUrl={`/icons/${category.icon}`}
+                                    count={categoryCounts[category.slug]}
+                                    isSelected={selectedCategory === category.slug}
+                                    onClick={() => handleCategoryClick(category.slug)}
+                                    compact
                                 />
                             ))}
                         </div>
-                    )}
-                </div>
 
-                {selectedCategory && (
-                    <div className="mt-6 text-center">
-                        <button
-                            onClick={() => onSelectCategory(null)}
-                            className="text-sm text-accent hover:underline"
-                        >
-                            Clear filter ×
-                        </button>
+                        {/* Right gradient fade indicator */}
+                        {canScrollRight && (
+                            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+                        )}
+                    </div>
+                ) : (
+                    /* Grid view on mobile (3 columns) */
+                    <div className="sm:hidden grid grid-cols-3 gap-2">
+                        {categories.map((category) => (
+                            <CategoryCard
+                                key={category.slug}
+                                slug={category.slug}
+                                name={category.name}
+                                iconUrl={`/icons/${category.icon}`}
+                                count={categoryCounts[category.slug]}
+                                isSelected={selectedCategory === category.slug}
+                                onClick={() => handleCategoryClick(category.slug)}
+                            />
+                        ))}
                     </div>
                 )}
             </div>
